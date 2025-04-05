@@ -91,7 +91,7 @@ return {
         map("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
 
         opts.desc = "Restart LSP"
-        map("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary,
+        map("n", "<leader>rl", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary,
 
         if client and client.server_capabilities.documentSymbolProvider then
           navic.attach(client, ev.buf)

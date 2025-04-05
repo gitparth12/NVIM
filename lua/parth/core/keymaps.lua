@@ -31,14 +31,14 @@ map("n", "<leader>j", "<cmd>lprev<CR>zz")
 -- <Esc>:%s/<c-r>=GetVisual()<cr>//g<left><left>
 
 -- replacing text
-map("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-map("v", "<leader>s", [["hy:%s/<C-r>h//gc<left><left><left>]])
+map("n", "<leader>rs", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+map("v", "<leader>rs", [["hy:%s/<C-r>h//gc<left><left><left>]])
 
 -- give execute permission
 map("n", "<leader>x", "<cmd>!chmod +x %<CR>")
 
 map("n", "<leader><leader>", function()
-    vim.cmd("so")
+  vim.cmd("so")
 end)
 
 map("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
@@ -54,6 +54,10 @@ map("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" }) -- c
 map("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  go to next tab
 map("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
 map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+
+map("n", "<leader>bn", "<cmd>bn<CR>", { desc = "Go to next buffer" })
+map("n", "<leader>bp", "<cmd>bp<CR>", { desc = "Go to previous buffer" })
+map("n", "<leader>bd", "<cmd>bd<CR>", { desc = "Delete current buffer" })
 
 -- remove C-j and C-k remaps
 -- map("n", "<C-J>", "")
