@@ -13,6 +13,8 @@ return {
   config = function()
     local neogit = require("neogit")
 
+    require("parth.helpers.keys").map({ "n", "v" }, "<leader>ng", "<cmd>Neogit<cr>", "Toggle Neogit")
+
     neogit.setup({
       -- Hides the hints at the top of the status buffer
       disable_hint = false,
