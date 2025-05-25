@@ -46,12 +46,43 @@ return {
       },
     })
 
+    -- Check for "lsp: off" or "lsp: disable" in the first 5 lines of the buffer
+    local function has_lsp_disable_comment(bufnr)
+      local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 5, false) -- check first 5 lines
+      for _, line in ipairs(lines) do
+        if line:match("lsp%s*:%s*off") or line:match("lsp%s*:%s*disable") then
+          return true
+        end
+      end
+      return false
+    end
+    -- Check for `.no-lsp` marker in the current or parent directories
+    local function has_no_lsp_marker(bufnr)
+      local path = vim.api.nvim_buf_get_name(bufnr)
+      local dir = vim.fn.fnamemodify(path, ":p:h")
+
+      while dir ~= "/" do
+        if vim.fn.filereadable(dir .. "/.no-lsp") == 1 then
+          return true
+        end
+        dir = vim.fn.fnamemodify(dir, ":h")
+      end
+      return false
+    end
+
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("UserLspConfig", {}),
       callback = function(ev)
         local opts = { buffer = ev.buf, silent = true }
         local navic = require("nvim-navic")
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        -- Check for lsp:off comment
+        if (has_lsp_disable_comment(ev.buf) or has_no_lsp_marker(ev.buf)) and client ~= nil then
+          vim.schedule(function()
+            client.stop()
+          end)
+          return
+        end
 
         -- set keybinds
         opts.desc = "Show LSP references"
