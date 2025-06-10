@@ -1,5 +1,5 @@
 local opts = {
-  shiftwidth = 2,
+  shiftwidth = 4,
   tabstop = 4,
   expandtab = true,
   wrap = false,
