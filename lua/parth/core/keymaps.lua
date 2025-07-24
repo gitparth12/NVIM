@@ -57,7 +57,7 @@ map("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new
 
 map("n", "<leader>bn", "<cmd>bn<CR>", { desc = "Go to next buffer" })
 map("n", "<leader>bp", "<cmd>bp<CR>", { desc = "Go to previous buffer" })
-map("n", "<leader>bd", "<cmd>bd<CR>", { desc = "Delete current buffer" })
+map("n", "<leader>bx", "<cmd>bd<CR>", { desc = "Delete current buffer" })
 
 -- remove C-j and C-k remaps
 -- map("n", "<C-J>", "")
