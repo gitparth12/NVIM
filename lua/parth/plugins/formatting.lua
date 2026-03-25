@@ -11,7 +11,7 @@ return {
         javascriptreact = { "prettier" },
         typescriptreact = { "prettier" },
         css = { "prettier" },
-        html = { "prettier" },
+        html = { "djlint" },
         json = { "prettier" },
         yaml = { "prettier" },
         markdown = { "prettier" },
@@ -20,7 +20,7 @@ return {
         rust = { "rustfmt" },
       },
       format_on_save = {
-        lsp_fallback = true,
+        lsp_format = "fallback",
         async = false,
         timeout_ms = 1000,
       },
