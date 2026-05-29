@@ -9,8 +9,6 @@ return {
     { "SmiteshP/nvim-navic" },
   },
   config = function()
-    local lspconfig = require("lspconfig")
-    local mason_lspconfig = require("mason-lspconfig")
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
     local map = require("parth.helpers.keys").map
@@ -26,11 +24,9 @@ return {
       { "▏", "FloatBorder" },
     }
 
-    local handlers = {
-      ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
-      ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = border }),
-    }
+    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border })
 
+    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = border })
     vim.diagnostic.config({
       signs = {
         text = {
@@ -147,44 +143,34 @@ return {
       vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
     end
 
-    mason_lspconfig.setup_handlers({
-      -- default handler for installed servers
-      function(server_name)
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-          handlers = handlers,
-        })
-      end,
-      -- ["pyright"] = function()
-      --   lspconfig["pyright"].setup({
-      --     on_init = function(client)
-      --       print("Pyright is using python:", client.config.settings.python.pythonPath)
-      --     end,
-      --     settings = {
-      --       python = {
-      --         pythonPath = "/Users/parthbhargava/data/honours/code/text_diversity-main/venv/bin/python"
-      --       }
-      --     }
-      --   })
-      -- end,
-      ["lua_ls"] = function()
-        -- configure lua server (with special settings)
-        lspconfig["lua_ls"].setup({
-          capabilities = capabilities,
-          handlers = handlers,
-          settings = {
-            Lua = {
-              -- make the language server recognize "vim" global
-              diagnostics = {
-                globals = { "vim" },
-              },
-              completion = {
-                callSnippet = "Replace",
-              },
+    local servers = {
+      html = {},
+      cssls = {},
+      tailwindcss = {},
+      rust_analyzer = {},
+      basedpyright = {},
+      ruff = {},
+
+      lua_ls = {
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = { "vim" },
+            },
+            completion = {
+              callSnippet = "Replace",
             },
           },
-        })
-      end,
-    })
+        },
+      },
+    }
+
+    for name, config in pairs(servers) do
+      config.capabilities = vim.tbl_deep_extend("force", {}, capabilities or {}, config.capabilities or {})
+
+      config.handlers = vim.tbl_deep_extend("force", {}, handlers or {}, config.handlers or {})
+      vim.lsp.config(name, config)
+      vim.lsp.enable(name)
+    end
   end,
 }
