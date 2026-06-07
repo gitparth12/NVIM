@@ -21,11 +21,18 @@ return {
 
     mason_tool_installer.setup({
       ensure_installed = {
-        "prettier", -- prettier formatter
-        "stylua", -- lua formatter
-        "isort", -- python formatter
-        "black", -- python formatter
-        "eslint_d", -- eslint linter
+        "prettier",
+        "stylua",
+        "isort",
+        "black",
+        "eslint_d",
+        "basedpyright",
+        "ruff",
+        "lua-language-server",
+        "html-lsp",
+        "css-lsp",
+        "tailwindcss-language-server",
+        "rust-analyzer",
       },
     })
   end,

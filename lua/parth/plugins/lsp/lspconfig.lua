@@ -3,14 +3,20 @@ return {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
-    "hrsh7th/cmp-nvim-lsp",
+    "saghen/blink.cmp",
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/neodev.nvim", opts = {} },
+    {
+      "folke/lazydev.nvim",
+      ft = "lua",
+      opts = {
+        library = {
+          { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+        },
+      },
+    },
     { "SmiteshP/nvim-navic" },
   },
   config = function()
-    local cmp_nvim_lsp = require("cmp_nvim_lsp")
-
     local map = require("parth.helpers.keys").map
 
     local border = {
@@ -24,9 +30,7 @@ return {
       { "▏", "FloatBorder" },
     }
 
-    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border })
 
-    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = border })
     vim.diagnostic.config({
       signs = {
         text = {
@@ -116,13 +120,13 @@ return {
         map("n", "<leader>D", vim.diagnostic.open_float, opts) -- show diagnostics for line
 
         opts.desc = "Go to previous diagnostic"
-        map("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
+        map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, opts)
 
         opts.desc = "Go to next diagnostic"
-        map("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
+        map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, opts)
 
         opts.desc = "Show documentation for what is under cursor"
-        map("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
+        map("n", "K", function() vim.lsp.buf.hover({ border = border }) end, opts)
 
         opts.desc = "Restart LSP"
         map("n", "<leader>rl", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary,
@@ -133,22 +137,21 @@ return {
       end,
     })
     -- used to enable autocompletion (assign to every lsp server config)
-    local capabilities = cmp_nvim_lsp.default_capabilities()
-
-    -- Change the Diagnostic symbols in the sign column (gutter)
-    -- (not in youtube nvim video)
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
+    local capabilities = require("blink.cmp").get_lsp_capabilities()
 
     local servers = {
       html = {},
       cssls = {},
       tailwindcss = {},
       rust_analyzer = {},
-      basedpyright = {},
+      basedpyright = {
+        settings = {
+          basedpyright = {
+            disableOrganizeImports = true,
+            analysis = { ignore = { "*" } },
+          },
+        },
+      },
       ruff = {},
 
       lua_ls = {
@@ -168,7 +171,6 @@ return {
     for name, config in pairs(servers) do
       config.capabilities = vim.tbl_deep_extend("force", {}, capabilities or {}, config.capabilities or {})
 
-      config.handlers = vim.tbl_deep_extend("force", {}, handlers or {}, config.handlers or {})
       vim.lsp.config(name, config)
       vim.lsp.enable(name)
     end

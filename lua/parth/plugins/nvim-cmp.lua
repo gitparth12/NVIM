@@ -1,54 +1,40 @@
 return {
-  "hrsh7th/nvim-cmp",
-  event = "InsertEnter",
+  "saghen/blink.cmp",
   dependencies = {
-    "hrsh7th/cmp-buffer", -- source for text in buffer
-    "hrsh7th/cmp-path", -- source for file in system paths
-    "L3MON4D3/LuaSnip", -- snippet engine
-    "saadparwaiz1/cmp_luasnip", -- for autocompletion
-    "rafamadriz/friendly-snippets", -- useful snippets
+    "L3MON4D3/LuaSnip",
+    "rafamadriz/friendly-snippets",
   },
-  config = function()
-    local cmp = require("cmp")
-
-    local luasnip = require("luasnip")
-
-    local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-    cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-
-    -- loads vscode style snippets from installed plugins (eg. friendly-snippets)
-    require("luasnip.loaders.from_vscode").lazy_load()
-
-    cmp.setup({
-      completion = {
-        completeopt = "menu,menuone,preview,noselect",
+  version = "*",
+  opts = {
+    keymap = {
+      preset = "none",
+      ["<C-k>"] = { "select_prev", "fallback" },
+      ["<C-j>"] = { "select_next", "fallback" },
+      ["<C-p>"] = { "select_prev", "fallback" },
+      ["<C-n>"] = { "select_next", "fallback" },
+      ["<C-y>"] = { "accept", "fallback" },
+      ["<C-Space>"] = { "show", "fallback" },
+      ["<C-e>"] = { "cancel", "fallback" },
+      ["<C-b>"] = { "scroll_documentation_up", "fallback" },
+      ["<C-f>"] = { "scroll_documentation_down", "fallback" },
+    },
+    appearance = {},
+    sources = {
+      default = { "lsp", "path", "snippets", "buffer", "lazydev" },
+      providers = {
+        lazydev = {
+          name = "LazyDev",
+          module = "lazydev.integrations.blink",
+          score_offset = 100,
+        },
       },
-      snippet = { -- configure how nvim-cmp interacts with snippet engine
-        expand = function(args)
-          luasnip.lsp_expand(args.body)
-        end,
-      },
-      window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
-      },
-      mapping = cmp.mapping.preset.insert({
-        ["<C-k>"] = cmp.mapping.select_prev_item(cmp.cmp_select),
-        ["<C-j>"] = cmp.mapping.select_next_item(cmp.cmp_select),
-        ["<C-p>"] = cmp.mapping.select_prev_item(cmp.cmp_jump),
-        ["<C-n>"] = cmp.mapping.select_next_item(cmp.cmp_jump),
-        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-y>"] = cmp.mapping.confirm({ select = true }),
-        ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
-        ["<C-e>"] = cmp.mapping.abort(), -- show completion window
-      }),
-      sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "luasnip" }, -- snippets
-        { name = "buffer" }, -- text within current buffer
-        { name = "path" }, -- file system paths
-      }),
-    })
-  end,
+    },
+    snippets = { preset = "luasnip" },
+    completion = {
+      accept = { auto_brackets = { enabled = true } },
+      documentation = { auto_show = true, auto_show_delay_ms = 200 },
+      menu = { border = "rounded" },
+    },
+    signature = { enabled = true, window = { border = "rounded" } },
+  },
 }

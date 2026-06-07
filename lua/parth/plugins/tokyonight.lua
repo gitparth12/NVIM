@@ -42,7 +42,9 @@ return {
         --- function will be called with a Highlights and ColorScheme table
         ---@param highlights tokyonight.Highlights
         ---@param colors ColorScheme
-        on_highlights = function(highlights, colors) end,
+        on_highlights = function(highlights, colors)
+          highlights.MsgArea = { bg = "#16161e" }
+        end,
       })
       vim.cmd([[colorscheme tokyonight]])
     end,
